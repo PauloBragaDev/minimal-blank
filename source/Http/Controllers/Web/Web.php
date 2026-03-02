@@ -10,6 +10,8 @@
     use Source\Domain\Auth\LoginUserService;
     use Source\Domain\User\RegisterUserService;
 
+    use Source\Http\Controllers\Auth\AuthApp;
+
     /**
      * Web Controller
      * @package Source\Http\Controllers\Web
@@ -93,10 +95,10 @@
          */
         public function loginPage(): void
         {
-            // if (AuthApp::user()) {
-            //     redirect("/app");
-            //     return;
-            // }
+            if (AuthApp::check()) {
+                redirect("/app");
+                return;
+            }
 
             $head = $this->seo->render(
                 "Entrar - " . CONF_SITE_NAME,
