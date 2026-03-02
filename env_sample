@@ -1,0 +1,9 @@
+#-- DATABASE 
+CONF_DB_HOST="xxx.xxx.xxx.xx"
+CONF_DB_USER="user_data"
+CONF_DB_PASS="your_pass"
+CONF_DB_NAME="db_name"
+
+#-- PROJECT URL
+CONF_URL_BASE=""
+CONF_URL_DEV="http://localhost/xxx"

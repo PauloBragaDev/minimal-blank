@@ -1,0 +1,9 @@
+/vendor/
+.env
+*.log
+.vscode/
+.idea/
+/node_modules/
+.lock
+composer.lock
+package-lock.json

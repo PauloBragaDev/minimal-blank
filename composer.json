@@ -1,0 +1,36 @@
+{
+    "name": "yellowebtech/minimal-blank",
+    "description": "Template Blank",
+    "minimum-stability": "stable",
+    "authors": [
+      {
+        "name": "Paulo Braga",
+        "email": "tecnologia@yelloweb.com.br",
+        "homepage": "https://yelloweb.com.br",
+        "role": "Developer"
+      }
+    ],
+    "config": {
+      "vendor-dir": "vendor"
+    },
+    "autoload": {
+      "psr-4": {
+        "Source\\": "source/"
+      },
+      "files": [
+        "source/Infrastructure/Config.php",
+        "source/Infrastructure/Helpers.php"
+      ]
+    },
+    "require": {
+      "phpmailer/phpmailer": "~6.0",
+      "league/plates": "^3.5",
+      "coffeecode/optimizer": "2.1.*",
+      "coffeecode/paginator": "2.*",
+      "coffeecode/router": "2.*",
+      "coffeecode/cropper": "2.*",
+      "coffeecode/uploader": "2.0.*",
+      "twbs/bootstrap": "5.3.8",
+      "vlucas/phpdotenv": "^5.6"
+    }
+  }
