@@ -18,8 +18,8 @@
         "Source\\": "source/"
       },
       "files": [
-        "source/Infrastructure/Config.php",
-        "source/Infrastructure/Helpers.php"
+        "source/Support/Config.php",
+        "source/Support/Helpers.php"
       ]
     },
     "require": {
