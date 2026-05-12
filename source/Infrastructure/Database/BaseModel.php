@@ -15,7 +15,7 @@ abstract class BaseModel
     /** @var object|null */
     protected $data;
 
-    /** @var \PDOException|null */
+    /** @var ?\PDOException|null */
     protected $fail;
 
     /** @var Message|null */
@@ -103,7 +103,7 @@ abstract class BaseModel
     }
 
     /**
-     * @return \PDOException
+     * @return \PDOException|null
      */
     public function fail(): ?\PDOException
     {
@@ -161,9 +161,9 @@ abstract class BaseModel
 
     /**
      * @param string $columnGroup
-     * @return Model
+     * @return static
      */
-    public function group(string $columnGroup): Model
+    public function group(string $columnGroup): static
     {
         $this->group = " GROUP BY {$columnGroup}";
         return $this;
@@ -171,9 +171,9 @@ abstract class BaseModel
 
     /**
      * @param string $columnOrder painel_controle_epi
-     * @return Model
+     * @return static
      */
-    public function order(string $columnOrder): Model
+    public function order(string $columnOrder): static
     {
         $this->order = " ORDER BY {$columnOrder}";
         return $this;
@@ -181,9 +181,9 @@ abstract class BaseModel
 
     /**
      * @param int $limit
-     * @return Model
+     * @return static
      */
-    public function limit(int $limit): Model
+    public function limit(int $limit): static
     {
         $this->limit = " LIMIT {$limit}";
         return $this;
@@ -191,9 +191,9 @@ abstract class BaseModel
 
     /**
      * @param int $offset
-     * @return Model
+     * @return static
      */
-    public function offset(int $offset): Model
+    public function offset(int $offset): static
     {
         $this->offset = " OFFSET {$offset}";
         return $this;
@@ -203,22 +203,42 @@ abstract class BaseModel
      * @param bool $all
      * @return null|array|mixed|static
      */
-    public function fetch(bool $all = false): ?static
+    public function fetch(): ?static
     {
         try {
-            $stmt = DatabaseConnection::getInstance()->prepare($this->query . $this->group . $this->order . $this->limit . $this->offset);
+            $stmt = DatabaseConnection::getInstance()->prepare(
+                $this->query . $this->group . $this->order . $this->limit . $this->offset
+            );
 
             $stmt->execute($this->params);
-            
+
             if (!$stmt->rowCount()) {
                 return null;
             }
 
-            if ($all) {
-                return $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
+            return $stmt->fetchObject(static::class);
+
+        } catch (\PDOException $exception) {
+            $this->fail = $exception;
+            return null;
+        }
+    }
+
+    public function fetchAll(): ?array
+    {
+        try {
+            $stmt = DatabaseConnection::getInstance()->prepare(
+                $this->query . $this->group . $this->order . $this->limit . $this->offset
+            );
+
+            $stmt->execute($this->params);
+
+            if (!$stmt->rowCount()) {
+                return null;
             }
 
-            return $stmt->fetchObject(static::class);
+            return $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
+
         } catch (\PDOException $exception) {
             $this->fail = $exception;
             return null;
@@ -338,7 +358,7 @@ abstract class BaseModel
         if (empty($this->id)) {
             $id = $this->insert($this->safe());
             if ($this->fail()) {
-                $this->message->error("Erro ao cadastrar, verifique os dados : ".$this->fail());
+                $this->message->error("Erro ao cadastrar, verifique os dados : ".$this->fail()->getMessage());
                 return false;
             }
         }
@@ -379,7 +399,7 @@ abstract class BaseModel
         $data = (array)$this->data();
         foreach ($this->required as $field) {
             if (empty($data[$field])) {
-                $this->fail = "{$data[$field]}";
+                $this->fail = new \PDOException("{$data[$field]}");
                 return false;
             }
         }
